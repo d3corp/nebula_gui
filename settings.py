@@ -3,8 +3,9 @@ from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ObjectProperty
 from storage import Storage
-from plyer import filechooser
+from kivy.core.window import Window
 
+Window.hide()
 store = Storage()
 class Settings(BoxLayout):
     state = StringProperty("off")
@@ -35,9 +36,13 @@ class Settings(BoxLayout):
 
 class SettingsApp(App):
     def build(self):
-        from kivy.core.window import Window
+        Window.restore()
         Window.bind(on_request_close=self.on_request_close)
+        Window.show()
         return Settings()
     def on_request_close(self, *args):
-        from kivy.core.window import Window
         Window.hide()
+
+    def showWindow(self):
+        Window.restore()
+        Window.show()

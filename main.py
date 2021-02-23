@@ -7,7 +7,14 @@ from storage import Storage
 import pystray
 from PIL import Image, ImageDraw
 from pystray import Menu, MenuItem
-from settings import SettingsApp
+from plyer import filechooser
+import pathlib
+import sys
+
+if getattr(sys, 'frozen', False):
+    directory = os.path.dirname(sys.executable)
+elif __file__:
+    directory = os.path.dirname(__file__)
 
 store = Storage()
 thread = None
@@ -33,19 +40,20 @@ def create_image(color=250):
 def setup(icon):
     icon.visible = True
 def log(line):
-    global logStr
-    if line.decode('utf-8') != '':
-        logStr=logStr+line.decode('utf-8')
-        print(line.decode('utf-8'))
+    file1 = open(str(directory)+os.sep+'thread.log', 'a+')
+    file1.write(line) 
+    file1.close() 
 def connect(icon, item):
     global thread
     if thread is None:
-        thread = threading.Thread(target=runNebula, args=("nebula", log, store.get('executable_path'), store.get('config_path')))
+        thread = threading.Thread(target=runNebula, args=("nebula", log, store.get('executable_path'), store.get('config_path'), directory))
         thread.daemon = True
         thread.start()
         icon.icon = create_image((51,255,51))
-def settings(icon, item):
-    SettingsApp().run()
+def config(icon, item):
+    paths = filechooser.open_file(title="Choose Nebula Config")    
+    if len(paths) > 0:
+        store.add('config_path', paths[0])
 def quit(icon, item):
     icon.stop()
 def menu():
@@ -54,14 +62,15 @@ def menu():
         'Connect',
         connect),
     MenuItem(
-        'Settings',
-        settings),
+        'Config',
+        config),
     MenuItem(
         'Quit',
         quit)
         )
 
 if __name__ == '__main__':
+    log(str(directory)+"\n")
     icon = pystray.Icon('test name', create_image(), menu=menu())
     #create_image().show()
     icon.run(setup)
