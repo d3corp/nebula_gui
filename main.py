@@ -18,6 +18,7 @@ elif __file__:
 
 store = Storage()
 thread = None
+threadDone = True
 logStr = ''
 
 def create_image(color=250):
@@ -43,13 +44,18 @@ def log(line):
     file1 = open(str(directory)+os.sep+'thread.log', 'a+')
     file1.write(line) 
     file1.close() 
+def tDone():
+    global threadDone
+    threadDone=True
+    icon.icon = create_image()
 def connect(icon, item):
-    global thread
-    if thread is None:
-        thread = threading.Thread(target=runNebula, args=("nebula", log, store.get('executable_path'), store.get('config_path'), directory))
+    global thread, threadDone
+    if threadDone:
+        thread = threading.Thread(target=runNebula, args=("nebula", log, store.get('executable_path'), store.get('config_path'), directory, tDone))
         thread.daemon = True
         thread.start()
         icon.icon = create_image((51,255,51))
+        threadDone=False
 def config(icon, item):
     paths = filechooser.open_file(title="Choose Nebula Config")    
     if len(paths) > 0:
