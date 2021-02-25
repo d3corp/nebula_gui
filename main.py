@@ -53,6 +53,7 @@ def config(icon, item):
 def quit(icon, item):
     global thread
     if thread is not None:
+        log("disconnect")
         thread.disconnect()
     icon.stop()
 def menu():
