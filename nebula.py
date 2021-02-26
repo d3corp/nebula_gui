@@ -3,7 +3,7 @@ import pathlib
 import os
 import threading
 
-def popen(cmd):
+def windowsPopen(cmd):
     startupinfo = subprocess.STARTUPINFO()
     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     process = subprocess.Popen(cmd, startupinfo=startupinfo, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
@@ -25,7 +25,10 @@ class Nebula(threading.Thread):
     
     def startProcess(self):
         print(str(self.directory)+os.sep+"nebula.exe")
-        proc = popen([str(self.directory)+os.sep+"nebula.exe", "--config", self.config])
+        if os.name == "nt":
+            proc = windowsPopen([str(self.directory)+os.sep+"nebula.exe", "--config", self.config], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        else:
+            proc = subprocess.Popen(["sudo", str(self.directory)+os.sep+"nebula", "--config", self.config])
         for line in iter(proc.stdout.readline, ''):
             if line.decode('utf-8') != '':
                 self.lineCallback(line.decode('utf-8'))

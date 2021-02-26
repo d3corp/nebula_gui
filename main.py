@@ -7,14 +7,17 @@ from storage import Storage
 import pystray
 from PIL import Image, ImageDraw, ImageFont
 from pystray import Menu, MenuItem
-from file_chooser import chooseFile
 import pathlib
 import sys
+from tkinter.filedialog import askopenfilename
+from tkinter import Tk     # from tkinter import Tk for Python 3.x
+from file_chooser import chooseConfig
+
 
 if getattr(sys, 'frozen', False):
     directory = os.path.dirname(sys.executable)
 elif __file__:
-    directory = os.path.dirname(__file__)
+    directory = os.path.dirname(os.path.abspath(__file__))
 
 store = Storage()
 thread = None
@@ -28,6 +31,7 @@ def create_image(type="off"):
     return image
 
 def setup(icon):
+
     icon.visible = True
 def log(line):
     file1 = open(str(directory)+os.sep+'nebula_gui.log', 'a+')
@@ -47,8 +51,8 @@ def connect(icon, item):
         icon.icon = create_image("connected")
         threadDone=False
 def config(icon, item):
-    path = chooseFile()
-    store.add('config_path', path)
+    filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+    store.add('config_path', filename)
 def quit(icon, item):
     global thread
     if thread is not None:
@@ -69,7 +73,7 @@ def menu():
         )
 
 if __name__ == '__main__':
-    log(str(directory)+"\n")
+    Tk().withdraw()
     icon = pystray.Icon('test name', create_image(), menu=menu())
     #create_image().show()
     icon.run(setup)
