@@ -7,7 +7,7 @@ from storage import Storage
 import pystray
 from PIL import Image, ImageDraw, ImageFont
 from pystray import Menu, MenuItem
-from plyer import filechooser
+from file_chooser import chooseFile
 import pathlib
 import sys
 
@@ -47,9 +47,8 @@ def connect(icon, item):
         icon.icon = create_image("connected")
         threadDone=False
 def config(icon, item):
-    paths = filechooser.open_file(title="Choose Nebula Config")    
-    if len(paths) > 0:
-        store.add('config_path', paths[0])
+    path = chooseFile()
+    store.add('config_path', path)
 def quit(icon, item):
     global thread
     if thread is not None:
