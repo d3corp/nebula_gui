@@ -12,6 +12,7 @@ import sys
 from tkinter.filedialog import askopenfilename
 from tkinter import Tk     # from tkinter import Tk for Python 3.x
 from file_chooser import chooseConfig
+import time
 
 
 if getattr(sys, 'frozen', False):
@@ -34,6 +35,8 @@ def setup(icon):
 
     icon.visible = True
 def log(line):
+    global direcotry
+    print(line)
     file1 = open(str(directory)+os.sep+'nebula_gui.log', 'a+')
     file1.write(line) 
     file1.close() 
@@ -56,9 +59,10 @@ def config(icon, item):
 def quit(icon, item):
     global thread
     if thread is not None:
-        log("disconnect")
+        log("disconnect\n")
         thread.disconnect()
     icon.stop()
+    exit(0)
 def menu():
     return Menu(
     MenuItem(

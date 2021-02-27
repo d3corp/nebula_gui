@@ -10,7 +10,7 @@ def windowsPopen(cmd):
     return process
 
 class Nebula(threading.Thread):
-    stop=False
+    proc=None
     def __init__(self, lineCallback, doneCallback, directory, config):
         threading.Thread.__init__(self)
         self.threadID = "nebula"
@@ -26,21 +26,32 @@ class Nebula(threading.Thread):
     def startProcess(self):
         print(str(self.directory)+os.sep+"nebula.exe")
         if os.name == "nt":
-            proc = windowsPopen([str(self.directory)+os.sep+"nebula.exe", "--config", self.config], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+            self.proc = windowsPopen([str(self.directory)+os.sep+"nebula.exe", "--config", self.config], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         else:
-            proc = subprocess.Popen(["sudo", str(self.directory)+os.sep+"nebula", "--config", self.config])
-        for line in iter(proc.stdout.readline, ''):
-            if line.decode('utf-8') != '':
-                self.lineCallback(line.decode('utf-8'))
-            if proc.poll() is not None:
-                self.doneCallback()
-                proc.kill()
-                break
-            if self.stop:
-                self.doneCallback()
-                self.lineCallback("Stopping")
-                proc.kill()
-                break
+            self.proc = subprocess.Popen([str(self.directory)+os.sep+"nebula", "--config", self.config], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        try:
+            for line in iter(self.proc.stdout.readline, ''):
+                if self.proc.poll() is not None:
+                    self.doneCallback()
+                    self.proc.kill()
+                    break
+                if line.decode('utf-8') != '':
+                    self.lineCallback(line.decode('utf-8'))
+                if line.decode('utf-8') == '':
+                    print("sleeping")
+                    time.sleep(1)
+            print("out of loop")
+        except AttributeError as e:
+            self.doneCallback()
+            out, err = self.proc.communicate()
+            if out is not None:
+                self.lineCallback(out)
+            if err is not None:
+                self.lineCallback(err)
+            if "NoneType" in str(e):
+                self.lineCallback("Please run as sudo\n")
+            self.proc.kill()
 
     def disconnect(self):
-        self.stop=True
+        self.lineCallback("Stopping")
+        self.proc.kill()
