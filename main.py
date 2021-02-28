@@ -62,7 +62,6 @@ def quit(icon, item):
         log("disconnect\n")
         thread.disconnect()
     icon.stop()
-    exit(0)
 def menu():
     return Menu(
     MenuItem(
