@@ -26,7 +26,7 @@ class Nebula(threading.Thread):
     def startProcess(self):
         print(str(self.directory)+os.sep+"nebula.exe")
         if os.name == "nt":
-            self.proc = windowsPopen([str(self.directory)+os.sep+"nebula.exe", "--config", self.config], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+            self.proc = windowsPopen([str(self.directory)+os.sep+"nebula.exe", "--config", self.config])
         else:
             self.proc = subprocess.Popen([str(self.directory)+os.sep+"nebula", "--config", self.config], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         try:
