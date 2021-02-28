@@ -29,7 +29,7 @@ class Nebula(threading.Thread):
             self.lineCallback("Please select 1 config file")
             return
         if os.name == "nt":
-            self.proc = windowsPopen([str(self.directory)+os.sep+"nebula.exe", "--config", self.config], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+            self.proc = windowsPopen([str(self.directory)+os.sep+"nebula.exe", "--config", self.config])
         else:
             self.proc = subprocess.Popen([str(self.directory)+os.sep+"nebula", "--config", self.config], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         try:
