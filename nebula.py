@@ -24,7 +24,10 @@ class Nebula(threading.Thread):
         self.startProcess()
     
     def startProcess(self):
-        print(str(self.directory)+os.sep+"nebula.exe")
+        if type(self.config) == list:
+            self.doneCallback()
+            self.lineCallback("Please select 1 config file")
+            return
         if os.name == "nt":
             self.proc = windowsPopen([str(self.directory)+os.sep+"nebula.exe", "--config", self.config], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         else:
@@ -54,4 +57,5 @@ class Nebula(threading.Thread):
 
     def disconnect(self):
         self.lineCallback("Stopping")
-        self.proc.kill()
+        if self.proc is not None:
+            self.proc.kill()

@@ -1,5 +1,3 @@
-
-from windows import is_admin
 from nebula import Nebula
 import threading
 import os
@@ -47,6 +45,9 @@ def tDone():
     icon.icon = create_image()
 def connect(icon, item):
     global thread, threadDone
+    if not store.exists("config_path"):
+        self.log("Config not selected")
+        return
     if threadDone:
         thread = Nebula(log, tDone, directory, store.get('config_path'))
         thread.daemon = True
@@ -62,7 +63,6 @@ def quit(icon, item):
         log("disconnect\n")
         thread.disconnect()
     icon.stop()
-    exit(0)
 def menu():
     return Menu(
     MenuItem(
@@ -78,6 +78,6 @@ def menu():
 
 if __name__ == '__main__':
     Tk().withdraw()
-    icon = pystray.Icon('test name', create_image(), menu=menu())
+    icon = pystray.Icon('Nebula GUI', create_image(), menu=menu())
     #create_image().show()
     icon.run(setup)

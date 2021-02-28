@@ -9,7 +9,7 @@ verify_ssl = true
 pyinstaller = "*"
 docutils = "*"
 pygments = "*"
-pypiwin32 = {version = "*", sys_platform = "== 'win3'"}
+pypiwin32 = {version = "*", sys_platform = "== 'win32'"}
 pystray = "*"
 pyobjc = {version = "*", sys_platform = "== 'darwin'"}
 
