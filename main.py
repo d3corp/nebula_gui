@@ -33,7 +33,6 @@ def setup(icon):
 
     icon.visible = True
 def log(line):
-    global direcotry
     print(line)
     file1 = open(str(directory)+os.sep+'nebula_gui.log', 'a+')
     file1.write(line) 
